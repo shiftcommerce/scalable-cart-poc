@@ -44,10 +44,6 @@ scenarios:
       url: /update_cart_item_quantity
       method: POST
       body: "{\"sku\":\"${sku}\",\"quantity\":11}"
-      assert:
-        - contains:
-          - "Set-Cookie"
-          subject: headers
     - label: view-cart
       url: /cart
       method: GET
@@ -60,10 +56,6 @@ scenarios:
       url: /update_cart_item_quantity
       method: POST
       body: "{\"sku\":\"${sku}\",\"quantity\":1}"
-      assert:
-        - contains:
-          - "Set-Cookie"
-          subject: headers
     - label: view-cart
       url: /cart
       method: GET
@@ -76,10 +68,6 @@ scenarios:
       url: /remove_item_from_cart
       method: POST
       body: "{\"sku\":\"${sku}\"}"
-      assert:
-        - contains:
-          - "Set-Cookie"
-          subject: headers
     - label: view-cart
       url: /cart
       method: GET
