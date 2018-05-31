@@ -1,0 +1,91 @@
+execution:
+- scenario: single_line_item_test
+  concurrency: 100
+  hold-for: 60s
+  ramp-up: 30s
+
+settings:
+  artifacts-dir: "log/taurus-%Y-%m-%d-%H-%M-%S"
+
+scenarios:
+  single_line_item_test:
+    data-sources:
+    - path: test/single_line_item_test.csv
+      delimiter: ','
+      quoted: false
+      loop: true
+      variable-names: sku,quantity
+    store-cache: true
+    store-cookie: true
+    keepalive: true
+    timeout: 500ms
+    headers:
+      Accept: application/json
+      Content-Type: application/json
+    default-address: http://localhost:5000
+    requests:
+    - label: add-to-cart
+      url: /add_item_to_cart
+      method: POST
+      body: "{\"sku\":\"${sku}\",\"quantity\":${quantity}}"
+      assert:
+        - contains:
+          - "Set-Cookie"
+          subject: headers
+    - label: view-cart
+      url: /cart
+      method: GET
+      assert:
+        - contains:
+          - "\"sku\":\"${sku}\",\"quantity\":${quantity}"
+          subject: body
+          regexp: false
+    - label: increase-cart-item-quantity
+      url: /update_cart_item_quantity
+      method: POST
+      body: "{\"sku\":\"${sku}\",\"quantity\":11}"
+      assert:
+        - contains:
+          - "Set-Cookie"
+          subject: headers
+    - label: view-cart
+      url: /cart
+      method: GET
+      assert:
+        - contains:
+          - "\"sku\":\"${sku}\",\"quantity\":11"
+          subject: body
+          regexp: false
+    - label: decrease-cart-item-quantity
+      url: /update_cart_item_quantity
+      method: POST
+      body: "{\"sku\":\"${sku}\",\"quantity\":1}"
+      assert:
+        - contains:
+          - "Set-Cookie"
+          subject: headers
+    - label: view-cart
+      url: /cart
+      method: GET
+      assert:
+        - contains:
+          - "\"sku\":\"${sku}\",\"quantity\":1"
+          subject: body
+          regexp: false
+    - label: remove-from-cart
+      url: /remove_item_from_cart
+      method: POST
+      body: "{\"sku\":\"${sku}\"}"
+      assert:
+        - contains:
+          - "Set-Cookie"
+          subject: headers
+    - label: view-cart
+      url: /cart
+      method: GET
+      assert:
+        - contains:
+          - "${sku}"
+          not: false
+          subject: body
+          regexp: false
