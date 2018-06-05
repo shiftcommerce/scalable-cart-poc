@@ -30,8 +30,9 @@ scenarios:
       body: "{\"sku\":\"${sku}\",\"quantity\":${quantity}}"
       assert:
         - contains:
-          - "Set-Cookie"
+          - (S|s)et-(C|c)ookie
           subject: headers
+          regexp: true
     - label: view-cart
       url: /cart
       method: GET
@@ -74,6 +75,6 @@ scenarios:
       assert:
         - contains:
           - "${sku}"
-          not: false
+          not: true
           subject: body
           regexp: false

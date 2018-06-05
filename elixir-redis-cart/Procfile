@@ -1,0 +1,2 @@
+web: cd cart_interface; PORT=5000 MIX_ENV=prod mix phx.server
+redis: redis-server
